@@ -24,13 +24,9 @@ const char Wavename[][5] PROGMEM = {"Sine", "Saw", "RSaw", "Tri", "Rect",
   "PL20", "PL10", "PL05", "Dlta", "Nois", "GNoi", "ECG", "Snc1", "Snc2", "Snc3",
   "Sin2", "Sin3", "CSin", "Sabs", "Trpz", "Stp2", "Stp4", "Csaw"};
 const byte wave_num = (sizeof(wavetable) / sizeof(&sine256));
-long ifreq = 50000; // frequency * 100 for 0.01Hz resolution
+long ifreq = 23841; // frequency * 100 for 0.01Hz resolution
 byte wave_id = 0;
 #define DDSPin A0
-
-// 12-Bit D/A Converter
-#define DACBASE 0x40050000  // DAC Base - DAC output on A0 (P014 AN09 DAC)
-#define DAC12_DADR0 ((volatile unsigned short *)(DACBASE + 0xE000)) // D/A Data Register 0 
 
 double refclk=30000.0f;           // System clock is 48MHz
 
@@ -104,7 +100,7 @@ void callbackfunc(timer_callback_args_t __attribute((unused)) *arg) {
   icnt=phaccu >> 24;      // use upper 8 bits for phase accu as frequency information
                           // read value fron ROM sine table and send to PWM DAC
 //  analogWrite(DAC, wp[icnt]);
-  *DAC12_DADR0 = wp[icnt]<<4;  // DAC update - takes 210nS - DAC ignores top 4 bits
+  R_DAC->DADR[0] = wp[icnt]<<4; // DAC update - takes 210nS - DAC ignores top 4 bits
 }
 
 //******************************************************************

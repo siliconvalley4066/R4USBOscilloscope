@@ -1,5 +1,5 @@
 /*
- * Arduino UNO R4 Oscilloscope using USB Serial Version 1.00
+ * Arduino UNO R4 Oscilloscope using USB Serial Version 1.01
  * The max sampling rates is 346ksps with single channel, 141ksps with 2 channels.
  * + Pulse Generator
  * + DAC DDS Function Generator (23 waveforms)
@@ -73,7 +73,7 @@ const int TRIG_E_DN = 1;
 #define ITEM_MAX 29
 const char Rates[RATE_NUM][5] PROGMEM = {"30us", "70us", "100u", "200u", "500u", " 1ms", " 2ms", " 5ms", "10ms", "20ms", "50ms", "0.1s", "0.2s", "0.5s", " 1s ", " 2s ", " 5s ", " 10s"};
 const unsigned long HREF[] PROGMEM = {30, 70, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000, 5000000, 10000000};
-const float dmahref[2] = {28.9, 70.7};
+const float dmahref[2] = {28.8, 70.7};
 #define RANGE_MIN 0
 #define RANGE_MAX 4
 #define VRF 5.0
