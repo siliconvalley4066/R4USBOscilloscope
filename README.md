@@ -1,5 +1,6 @@
 # R4USBOscilloscope
 Arduino UNO R4 Minima USB dual channel oscilloscope with Pulse Generator, DDS Function Generator
+This is a porting to Arduino UNO R4 Minima from <a href="https://github.com/jklomp/pico-RP2040-oscilloscope">pico-RP2040-oscilloscope</a>.
 
 <img src="R4USBscreen.png">
 
@@ -36,5 +37,5 @@ Description is here, although it is written in Japanese language:
 https://ss1.xrea.com/harahore.g2.xrea.com/R4/R4USBOscillo.html
 
 References:<br>
-The communication protocol and the HTML code comes from
-https://github.com/jklomp/pico-RP2040-oscilloscope
+The communication protocol and the HTML code comes from<br>
+jklomp / pico-RP2040-oscilloscope　<a href="https://github.com/jklomp/pico-RP2040-oscilloscope">https://github.com/jklomp/pico-RP2040-oscilloscope</a><br>
