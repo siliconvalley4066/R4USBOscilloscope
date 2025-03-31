@@ -34,3 +34,7 @@ Schematics:<br>
 
 Description is here, although it is written in Japanese language:
 https://ss1.xrea.com/harahore.g2.xrea.com/R4/R4USBOscillo.html
+
+References:<br>
+The communication protocol and the HTML code comes from
+https://github.com/jklomp/pico-RP2040-oscilloscope
