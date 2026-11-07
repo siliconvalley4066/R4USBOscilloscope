@@ -528,7 +528,7 @@
 	}
 	
 	function onload(){	
-		var sps = [0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10,20,50,100,143,329.367] // in kHz
+		var sps = [0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10,20,50,100,143,347.693] // in kHz
 		document.getElementById("sampssecslider").oninput = function() {
 			var value = this.value;
 			var value1 = sps[value];
@@ -566,9 +566,9 @@
 	
 	async function txFrequency(event){
 		var freq = document.getElementById("wavefreq").value
-		if (freq < 10) {
-			document.getElementById("wavefreq").value = 10
-			freq = 10
+		if (freq < 1) {
+			document.getElementById("wavefreq").value = 1
+			freq = 1
 		}
 		var dc = document.getElementById("wavedc").value
 		var command = new Uint8Array([42, 102, 0, 0, 0, 0, 0, 0, 47]); // [*,f,hhhh,hh/]
