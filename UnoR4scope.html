@@ -468,7 +468,7 @@
 		var sampssec = document.getElementById("sampssec").innerHTML;
 		var sampleSpeedDivider = Math.round(500 * 96 / sampssec) - 1
 		if (sampleSpeedDivider < 96) sampleSpeedDivider = 0;
-		sampleSpeedDivider = 17 - document.getElementById("sampssecslider").value;
+		sampleSpeedDivider = 18 - document.getElementById("sampssecslider").value;
 		valueAsHexToArray(triglev, parameterCommand, 2 ,2)
 		valueAsHexToArray(sampleSpeedDivider, parameterCommand, 4 ,4)
 
@@ -528,7 +528,7 @@
 	}
 	
 	function onload(){	
-		var sps = [0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10,20,50,100,143,347.693] // in kHz
+		var sps = [0.001,0.002,0.005,0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10,20,50,100,200,500,1067] // in kHz
 		document.getElementById("sampssecslider").oninput = function() {
 			var value = this.value;
 			var value1 = sps[value];
@@ -592,11 +592,11 @@
 		if (n==5) {e5.checked = e2.cheched || e3.checked; e4.checked = !e5.checked}
         roundrobin = e1.checked * 1 + e2.checked * 2 + e3.checked * 3 + 48  // '1'', '2'or '3'
 		if (e3.checked) {
-			//document.getElementById("sampssecslider").max = "19"
+			document.getElementById("sampssecslider").max = "15"
 			document.getElementById("sampssec").style.display = "none"
 			document.getElementById("sampssecdual").style.display = "block"
 		} else {
-			//document.getElementById("sampssecslider").max = "20"
+			document.getElementById("sampssecslider").max = "18"
 			document.getElementById("sampssec").style.display = "block"
 			document.getElementById("sampssecdual").style.display = "none"	
 		}
@@ -742,7 +742,7 @@
 			<td><input id="trigch2" type="checkbox" onclick="channelselect(5)"></td>
 		</tr>
 		<tr><td>sampling speed</td>
-			<td><span id="sampssec">143</span><span id = "sampssecdual">143</span></td>
+			<td><span id="sampssec">100</span><span id = "sampssecdual">100</span></td>
 			<td>kS/s</td>
 		</tr> 
 	</table>
@@ -754,7 +754,7 @@
 	</tr>
 	<tr>
 	<td>sampling speed</td>
-	<td  id="slider" ><input class="slider" id="sampssecslider" type="range" min="0" max="17" value="16"></td>
+	<td  id="slider" ><input class="slider" id="sampssecslider" type="range" min="0" max="18" value="15"></td>
 	<td class="spacer"></td>
 	<td>horizontal zoom</td>
 	<td><input class="slider" id="horzoom" type="range" min="1" max="10" value="1"></td>

@@ -1,9 +1,9 @@
 /*
- * Arduino UNO R4 Oscilloscope using USB Serial Version 1.01
- * The max sampling rates is 346ksps with single channel, 141ksps with 2 channels.
- * + Pulse Generator
+ * Arduino UNO R4 Oscilloscope using USB Serial Version 1.02
+ * The max sampling rates is 1.07Msps with single channel, 100ksps with 2 channels.
+* + Pulse Generator
  * + DAC DDS Function Generator (23 waveforms)
- * Copyright (c) 2025, Siliconvalley4066
+ * Copyright (c) 2025,2026, Siliconvalley4066
  */
 /*
  * Arduino Oscilloscope using a graphic LCD
@@ -64,16 +64,16 @@ const char TRIG_Modes[4][5] PROGMEM = {"Auto", "Norm", "Scan", "One "};
 const int TRIG_E_UP = 0;
 const int TRIG_E_DN = 1;
 #define RATE_MIN 0
-#define RATE_MAX 17
-#define RATE_NUM 18
-#define RATE_DMA 0
-#define RATE_DUAL 1
-#define RATE_SLOW 7
-#define RATE_ROLL 13
-#define ITEM_MAX 29
-const char Rates[RATE_NUM][5] PROGMEM = {"30us", "70us", "100u", "200u", "500u", " 1ms", " 2ms", " 5ms", "10ms", "20ms", "50ms", "0.1s", "0.2s", "0.5s", " 1s ", " 2s ", " 5s ", " 10s"};
-const unsigned long HREF[] PROGMEM = {30, 70, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000, 5000000, 10000000};
-const float dmahref[2] = {28.8, 70.7};
+#define RATE_MAX 18
+#define RATE_NUM 19
+#define RATE_DMA 2
+#define RATE_DUAL 3
+#define RATE_SLOW 8
+#define RATE_ROLL 14
+#define ITEM_MAX 30
+const char Rates[RATE_NUM][5] PROGMEM = {"9.4u", "20us", "50us", "100u", "200u", "500u", " 1ms", " 2ms", " 5ms", "10ms", "20ms", "50ms", "0.1s", "0.2s", "0.5s", " 1s ", " 2s ", " 5s ", " 10s"};
+const unsigned long HREF[] PROGMEM = {10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000, 5000000, 10000000};
+const float dmahref[3] = {9.375, 20.0, 50.0};
 #define RANGE_MIN 0
 #define RANGE_MAX 4
 #define VRF 5.0
@@ -97,6 +97,7 @@ byte info_mode = 3; // Text information display mode
 int trigger_ad;
 const double sys_clk = (double)F_CPU;
 volatile bool wfft, wdds;
+int trigger_pos;
 bool rate_flag = false;
 byte rate_value;
 
@@ -136,14 +137,8 @@ void setup(){
   if (dds_mode)
     dds_setup();
   orate = RATE_DMA + 1;                 // old rate befor change
-  analogReadResolution(12);
-  analogRead(A2); // dummy read for setup
-  analogRead(A1); // dummy read for setup
-//  adc_set_speed();
+  adc_set_speed();
 }
-
-unsigned long fcount = 0;
-//const double freq_ratio = 20000.0 / 19987.0;
 
 void scaleDataArray(byte ad_ch, int trig_point)
 {
@@ -152,6 +147,7 @@ void scaleDataArray(byte ad_ch, int trig_point)
   uint16_t *idata, *qdata;
   long a, b;
 
+  trigger_pos = trig_point;
   if (ad_ch == ad_ch1) {
     ch_off = ch1_off;
     ch_mode = ch1_mode;
@@ -245,9 +241,9 @@ void loop() {
   // sample and draw depending on the sampling rate
   if (rate < RATE_ROLL && Start) {
 
-    if (rate <= RATE_DMA) {         // DMA, min 0.39us sampling (2.57Msps)
-      sample_usf();                 // single channel sampling
-    } else if (rate < RATE_SLOW) {  // dual channel 7us, 10us, 20us, 50us, 100us, 200us sampling
+    if (rate <= RATE_DMA) {         // min 0.93us sampling (1.07Msps)
+      sample_dma();                 // single channel sampling
+    } else if (rate < RATE_SLOW) {  // dual channel 10us, 20us, 50us, 100us, 200us sampling
       sample_dual_usf(HREF[rate] / 10);
     } else {                // dual channel .5ms, 1ms, 2ms, 5ms, 10ms, 20ms sampling
       sample_dual_ms(HREF[rate] / 10);
@@ -306,6 +302,11 @@ void CheckRate() {
   if (rate_flag) {
     rate = rate_value;
     rate_flag = false;
+    if (rate > RATE_DMA)
+      adc_arduino();
+    else if (rate <= RATE_DMA)
+      adc_dmamode();
+    orate = rate;
     saveTimer = 5000;
   }
 }
@@ -360,8 +361,12 @@ void sample_dual_ms(unsigned int r) { // dual channel. r > 500
 void plotFFT() {
   int ylim = LCD_YMAX - 8;
 
+  int j = 0;
+  if (rate <= RATE_DMA) {
+    j = trigger_pos;
+  }
   for (int i = 0; i < FFT_N; i++) {
-    vReal[i] = cap_buf[i];
+    vReal[i] = cap_buf[j++];
     vImag[i] = 0.0;
   }
   FFT.dcRemoval();
@@ -489,7 +494,7 @@ void loadEEPROM() { // Read setting values from EEPROM (abnormal values will be 
   pulse_mode = EEPROM.read(p++);            // pulse_mode
   duty = EEPROM.read(p++);                  // duty
   p_range = EEPROM.read(p++);               // p_range
-  if (p_range > 16) ++error;
+  if (p_range > 5) ++error;
   *((byte *)&count) = EEPROM.read(p++);     // count low
   *((byte *)&count + 1) = EEPROM.read(p++); // count high
   dds_mode = EEPROM.read(p++);              // DDS mode
