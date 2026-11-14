@@ -1,5 +1,5 @@
 /*
- * Arduino UNO R4 Oscilloscope using USB Serial Version 1.03
+ * Arduino UNO R4 Oscilloscope using USB Serial Version 1.04
  * The max sampling rates is 1.07Msps with single channel, 100ksps with 2 channels.
 * + Pulse Generator
  * + DAC DDS Function Generator (23 waveforms)
